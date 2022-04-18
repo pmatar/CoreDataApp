@@ -19,6 +19,7 @@ class TaskListViewController: UITableViewController {
         view.backgroundColor = .white
         setupNavigationBar()
         fetchData()
+        tableView.reloadData()
     }
     
     // MARK: - Private Methods
@@ -65,7 +66,13 @@ class TaskListViewController: UITableViewController {
         let cellIndex = IndexPath(row: taskList.count - 1, section: 0)
         tableView.insertRows(at: [cellIndex], with: .automatic)
         
-        try! coreDataManager.persistentContainer.viewContext.save()
+        coreDataManager.saveContext()
+    }
+    // need to refactor
+    private func saveEdit(_ task: Task) {
+        let task = Task(context: coreDataManager.persistentContainer.viewContext)
+        
+        coreDataManager.saveContext()
     }
     
     // MARK: - AlertController
@@ -81,6 +88,25 @@ class TaskListViewController: UITableViewController {
         alert.addAction(cancelAction)
         alert.addTextField { textField in
             textField.placeholder = "New Task"
+        }
+        present(alert, animated: true)
+    }
+    
+    // need to refactor
+    private func showAnotherAlert(with title: String, and message: String, _ model: Task, _ ind: IndexPath) {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        let saveAction = UIAlertAction(title: "Save", style: .default) { _ in
+            guard let task = alert.textFields?.first?.text, !task.isEmpty else { return }
+            model.title = task
+            self.coreDataManager.saveContext()
+            self.fetchData()
+            self.tableView.reconfigureRows(at: [ind])
+        }
+        let cancelAction = UIAlertAction(title: "Cancel", style: .destructive)
+        alert.addAction(saveAction)
+        alert.addAction(cancelAction)
+        alert.addTextField { textField in
+            textField.text = model.title
         }
         present(alert, animated: true)
     }
@@ -101,5 +127,31 @@ extension TaskListViewController {
         content.text = task.title
         cell.contentConfiguration = content
         return cell
+    }
+    
+    override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        
+        let action = UIContextualAction(style: .destructive, title: "Delete") { _,_,_ in
+    
+            let taskToRemove = self.taskList[indexPath.row]
+            
+            self.coreDataManager.persistentContainer.viewContext.delete(taskToRemove)
+            self.coreDataManager.saveContext()
+            self.fetchData()
+            
+            self.tableView.deleteRows(at: [indexPath], with: .automatic)
+           
+        }
+        
+        return UISwipeActionsConfiguration(actions: [action])
+    }
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
+        let selectedTask = taskList[indexPath.row]
+        
+        showAnotherAlert(with: "Edit task", and: "Edit your task!", selectedTask, indexPath)
+        tableView.deselectRow(at: indexPath, animated: true)
+
     }
 }
