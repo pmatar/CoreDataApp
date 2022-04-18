@@ -6,10 +6,10 @@
 //
 
 import UIKit
-import CoreData
 
 class TaskListViewController: UITableViewController {
-    private let viewContext = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+    
+    private let coreDataManager = StorageManager.shared
     private var taskList: [Task] = []
     private let cellID = "task"
 
@@ -21,6 +21,8 @@ class TaskListViewController: UITableViewController {
         fetchData()
     }
     
+    // MARK: - Private Methods
+
     private func setupNavigationBar() {
         title = "Task List"
         navigationController?.navigationBar.prefersLargeTitles = true
@@ -41,9 +43,7 @@ class TaskListViewController: UITableViewController {
         )
         navigationController?.navigationBar.tintColor = .white
     }
-    
-    // MARK: - Private Methods
-    
+        
     @objc private func addButtonTapped() {
         showAlert(with: "New Task", and: "What do you want to do?")
     }
@@ -51,11 +51,24 @@ class TaskListViewController: UITableViewController {
     private func fetchData() {
         let fetchRequest = Task.fetchRequest()
         do {
-            taskList = try viewContext.fetch(fetchRequest)
+            taskList = try coreDataManager.persistentContainer.viewContext.fetch(fetchRequest)
         } catch {
             print(error.localizedDescription)
         }
     }
+    
+    private func save(_ taskName: String) {
+        let task = Task(context: coreDataManager.persistentContainer.viewContext)
+        task.title = taskName
+        taskList.append(task)
+        
+        let cellIndex = IndexPath(row: taskList.count - 1, section: 0)
+        tableView.insertRows(at: [cellIndex], with: .automatic)
+        
+        try! coreDataManager.persistentContainer.viewContext.save()
+    }
+    
+    // MARK: - AlertController
     
     private func showAlert(with title: String, and message: String) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
@@ -71,25 +84,10 @@ class TaskListViewController: UITableViewController {
         }
         present(alert, animated: true)
     }
-    
-    private func save(_ taskName: String) {
-        let task = Task(context: viewContext)
-        task.title = taskName
-        taskList.append(task)
-        
-        let cellIndex = IndexPath(row: taskList.count - 1, section: 0)
-        tableView.insertRows(at: [cellIndex], with: .automatic)
-        
-        if viewContext.hasChanges {
-            do {
-                try viewContext.save()
-            } catch {
-                print(error.localizedDescription)
-            }
-        }
-    }
 
 }
+
+// MARK: - TableViewDelegate
 
 extension TaskListViewController {
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
