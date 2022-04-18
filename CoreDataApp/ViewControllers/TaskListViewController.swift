@@ -8,10 +8,6 @@
 import UIKit
 import CoreData
 
-protocol TaskViewControllerDelegate: AnyObject {
-    func reloadData()
-}
-
 class TaskListViewController: UITableViewController {
     private let viewContext = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     private var taskList: [Task] = []
@@ -46,11 +42,10 @@ class TaskListViewController: UITableViewController {
         navigationController?.navigationBar.tintColor = .white
     }
     
+    // MARK: - Private Methods
+    
     @objc private func addButtonTapped() {
-        let taskVC = TaskViewController()
-//        taskVC.modalPresentationStyle = .fullScreen
-        taskVC.delegate = self
-        present(taskVC, animated: true)
+        showAlert(with: "New Task", and: "What do you want to do?")
     }
     
     private func fetchData() {
@@ -61,7 +56,38 @@ class TaskListViewController: UITableViewController {
             print(error.localizedDescription)
         }
     }
-
+    
+    private func showAlert(with title: String, and message: String) {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        let saveAction = UIAlertAction(title: "Save", style: .default) { _ in
+            guard let task = alert.textFields?.first?.text, !task.isEmpty else { return }
+            self.save(task)
+        }
+        let cancelAction = UIAlertAction(title: "Cancel", style: .destructive)
+        alert.addAction(saveAction)
+        alert.addAction(cancelAction)
+        alert.addTextField { textField in
+            textField.placeholder = "New Task"
+        }
+        present(alert, animated: true)
+    }
+    
+    private func save(_ taskName: String) {
+        let task = Task(context: viewContext)
+        task.title = taskName
+        taskList.append(task)
+        
+        let cellIndex = IndexPath(row: taskList.count - 1, section: 0)
+        tableView.insertRows(at: [cellIndex], with: .automatic)
+        
+        if viewContext.hasChanges {
+            do {
+                try viewContext.save()
+            } catch {
+                print(error.localizedDescription)
+            }
+        }
+    }
 
 }
 
@@ -77,12 +103,5 @@ extension TaskListViewController {
         content.text = task.title
         cell.contentConfiguration = content
         return cell
-    }
-}
-
-extension TaskListViewController: TaskViewControllerDelegate {
-    func reloadData() {
-        fetchData()
-        tableView.reloadData()
     }
 }

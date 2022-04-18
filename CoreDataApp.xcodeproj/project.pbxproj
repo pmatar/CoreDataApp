@@ -13,7 +13,6 @@
 		CF341E5E280DD15600B1C2E2 /* CoreDataApp.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = CF341E5C280DD15600B1C2E2 /* CoreDataApp.xcdatamodeld */; };
 		CF341E60280DD15700B1C2E2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CF341E5F280DD15700B1C2E2 /* Assets.xcassets */; };
 		CF341E63280DD15700B1C2E2 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CF341E61280DD15700B1C2E2 /* LaunchScreen.storyboard */; };
-		CF341E6B280DD74900B1C2E2 /* TaskViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF341E6A280DD74900B1C2E2 /* TaskViewController.swift */; };
 		CFEFADE4280DE0B700A19856 /* StorageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFEFADE3280DE0B700A19856 /* StorageManager.swift */; };
 /* End PBXBuildFile section */
 
@@ -26,7 +25,6 @@
 		CF341E5F280DD15700B1C2E2 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		CF341E62280DD15700B1C2E2 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		CF341E64280DD15700B1C2E2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		CF341E6A280DD74900B1C2E2 /* TaskViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskViewController.swift; sourceTree = "<group>"; };
 		CFEFADE3280DE0B700A19856 /* StorageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -81,7 +79,6 @@
 			isa = PBXGroup;
 			children = (
 				CF341E57280DD15600B1C2E2 /* TaskListViewController.swift */,
-				CF341E6A280DD74900B1C2E2 /* TaskViewController.swift */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -169,7 +166,6 @@
 			files = (
 				CF341E5E280DD15600B1C2E2 /* CoreDataApp.xcdatamodeld in Sources */,
 				CF341E58280DD15600B1C2E2 /* TaskListViewController.swift in Sources */,
-				CF341E6B280DD74900B1C2E2 /* TaskViewController.swift in Sources */,
 				CFEFADE4280DE0B700A19856 /* StorageManager.swift in Sources */,
 				CF341E54280DD15600B1C2E2 /* AppDelegate.swift in Sources */,
 				CF341E56280DD15600B1C2E2 /* SceneDelegate.swift in Sources */,
