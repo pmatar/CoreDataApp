@@ -21,10 +21,6 @@ class TaskListViewController: UITableViewController {
         fetchData()
     }
     
-    deinit {
-        print("No retain cycles")
-    }
-    
     // MARK: - UITableViewDelegate, UITableViewDataSource
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
