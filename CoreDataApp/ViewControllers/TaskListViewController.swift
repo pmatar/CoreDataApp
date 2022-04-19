@@ -21,6 +21,10 @@ class TaskListViewController: UITableViewController {
         fetchData()
     }
     
+    deinit {
+        print("No retain cycles")
+    }
+    
     // MARK: - UITableViewDelegate, UITableViewDataSource
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -57,6 +61,7 @@ class TaskListViewController: UITableViewController {
 
         let action = UIContextualAction(style: .normal, title: "Edit") { [weak self] _, _, completion in
             guard let self = self else { return }
+            
             self.showAlert(with: "Update Task", and: "What do you want to do?", selectedTask, indexPath)
             completion(true)
         }
@@ -123,7 +128,7 @@ extension TaskListViewController {
         coreDataManager.saveContext()
     }
     
-    private func edit(model: Task, with text: String, at index: IndexPath) {
+    private func edit(_ model: Task, with text: String, at index: IndexPath) {
         model.title = text
         coreDataManager.saveContext()
         fetchData()
@@ -144,7 +149,7 @@ extension TaskListViewController {
             guard let task = alert.textFields?.first?.text, !task.isEmpty else { return }
             
             if let model = model, let index = index {
-                self.edit(model: model, with: task, at: index)
+                self.edit(model, with: task, at: index)
             } else {
                 self.save(task)
             }
