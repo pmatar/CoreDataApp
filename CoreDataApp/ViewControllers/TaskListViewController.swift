@@ -128,8 +128,8 @@ extension TaskListViewController {
         coreDataManager.saveContext()
     }
     
-    private func edit(_ model: Task, with text: String, at index: IndexPath) {
-        model.title = text
+    private func edit(_ task: Task, with text: String, at index: IndexPath) {
+        task.title = text
         coreDataManager.saveContext()
         fetchData()
         tableView.reconfigureRows(at: [index])
@@ -141,17 +141,17 @@ extension TaskListViewController {
         tableView.deleteRows(at: [index], with: .automatic)
     }
     
-    // MARK: - AlertController
+    // MARK: - UIAlertController
     
-    private func showAlert(with title: String, and message: String, _ model: Task? = nil, _ index: IndexPath? = nil) {
+    private func showAlert(with title: String, and message: String, _ task: Task? = nil, _ index: IndexPath? = nil) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         let saveAction = UIAlertAction(title: "Save", style: .default) { _ in
-            guard let task = alert.textFields?.first?.text, !task.isEmpty else { return }
+            guard let inputTask = alert.textFields?.first?.text, !inputTask.isEmpty else { return }
             
-            if let model = model, let index = index {
-                self.edit(model, with: task, at: index)
+            if let task = task, let index = index {
+                self.edit(task, with: inputTask, at: index)
             } else {
-                self.save(task)
+                self.save(inputTask)
             }
         }
         let cancelAction = UIAlertAction(title: "Cancel", style: .destructive)
@@ -160,7 +160,7 @@ extension TaskListViewController {
         alert.addAction(cancelAction)
         alert.addTextField { textField in
             textField.placeholder = "New Task"
-            textField.text = model?.title
+            textField.text = task?.title
         }
         present(alert, animated: true)
     }

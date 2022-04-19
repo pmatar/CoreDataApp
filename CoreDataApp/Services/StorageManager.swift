@@ -5,14 +5,11 @@
 //  Created by Paul Matar on 18/04/2022.
 //
 
-import Foundation
 import CoreData
 
 class StorageManager {
     
     static let shared = StorageManager()
-    
-    // MARK: - Core Data stack
     
     var persistentContainer: NSPersistentContainer = {
         let container = NSPersistentContainer(name: "CoreDataApp")
@@ -25,8 +22,6 @@ class StorageManager {
     }()
     
     private init() {}
-    
-    // MARK: - Core Data Saving support
     
     func saveContext() {
         let context = persistentContainer.viewContext
