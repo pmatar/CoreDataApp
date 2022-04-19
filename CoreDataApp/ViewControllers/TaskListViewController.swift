@@ -10,6 +10,7 @@ import UIKit
 class TaskListViewController: UITableViewController {
     
     private let coreDataManager = StorageManager.shared
+    private lazy var context = coreDataManager.persistentContainer.viewContext    
     private var taskList: [Task] = []
     private let cellID = "task"
     
@@ -107,14 +108,14 @@ extension TaskListViewController {
     private func fetchData() {
         let fetchRequest = Task.fetchRequest()
         do {
-            taskList = try coreDataManager.persistentContainer.viewContext.fetch(fetchRequest)
+            taskList = try context.fetch(fetchRequest)
         } catch {
             print(error.localizedDescription)
         }
     }
     
     private func save(_ taskName: String) {
-        let task = Task(context: coreDataManager.persistentContainer.viewContext)
+        let task = Task(context: context)
         task.title = taskName
         taskList.append(task)
         
@@ -132,7 +133,7 @@ extension TaskListViewController {
     }
     
     private func delete(_ task: Task, at index: IndexPath) {
-        coreDataManager.persistentContainer.viewContext.delete(task)
+        context.delete(task)
         coreDataManager.saveContext()
         tableView.deleteRows(at: [index], with: .automatic)
     }
