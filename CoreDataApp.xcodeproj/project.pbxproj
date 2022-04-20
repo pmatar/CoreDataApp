@@ -12,7 +12,6 @@
 		CF341E58280DD15600B1C2E2 /* TaskListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF341E57280DD15600B1C2E2 /* TaskListViewController.swift */; };
 		CF341E5E280DD15600B1C2E2 /* CoreDataApp.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = CF341E5C280DD15600B1C2E2 /* CoreDataApp.xcdatamodeld */; };
 		CF341E60280DD15700B1C2E2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CF341E5F280DD15700B1C2E2 /* Assets.xcassets */; };
-		CF341E63280DD15700B1C2E2 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CF341E61280DD15700B1C2E2 /* LaunchScreen.storyboard */; };
 		CFEFADE4280DE0B700A19856 /* StorageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFEFADE3280DE0B700A19856 /* StorageManager.swift */; };
 /* End PBXBuildFile section */
 
@@ -23,7 +22,6 @@
 		CF341E57280DD15600B1C2E2 /* TaskListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskListViewController.swift; sourceTree = "<group>"; };
 		CF341E5D280DD15600B1C2E2 /* CoreData.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = CoreData.xcdatamodel; sourceTree = "<group>"; };
 		CF341E5F280DD15700B1C2E2 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		CF341E62280DD15700B1C2E2 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		CF341E64280DD15700B1C2E2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		CFEFADE3280DE0B700A19856 /* StorageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -58,13 +56,29 @@
 		CF341E52280DD15600B1C2E2 /* CoreDataApp */ = {
 			isa = PBXGroup;
 			children = (
+				CF81EEAD2810872800FC6D0C /* Resources */,
 				CFEFADE7280DE0DF00A19856 /* App */,
 				CFEFADE5280DE0C000A19856 /* Services */,
 				CFEFADE6280DE0CC00A19856 /* ViewControllers */,
-				CF341E64280DD15700B1C2E2 /* Info.plist */,
-				CF341E5C280DD15600B1C2E2 /* CoreDataApp.xcdatamodeld */,
+				CF81EEAC2810871500FC6D0C /* Models */,
 			);
 			path = CoreDataApp;
+			sourceTree = "<group>";
+		};
+		CF81EEAC2810871500FC6D0C /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				CF341E5C280DD15600B1C2E2 /* CoreDataApp.xcdatamodeld */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		CF81EEAD2810872800FC6D0C /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				CF341E5F280DD15700B1C2E2 /* Assets.xcassets */,
+			);
+			path = Resources;
 			sourceTree = "<group>";
 		};
 		CFEFADE5280DE0C000A19856 /* Services */ = {
@@ -88,8 +102,7 @@
 			children = (
 				CF341E53280DD15600B1C2E2 /* AppDelegate.swift */,
 				CF341E55280DD15600B1C2E2 /* SceneDelegate.swift */,
-				CF341E5F280DD15700B1C2E2 /* Assets.xcassets */,
-				CF341E61280DD15700B1C2E2 /* LaunchScreen.storyboard */,
+				CF341E64280DD15700B1C2E2 /* Info.plist */,
 			);
 			path = App;
 			sourceTree = "<group>";
@@ -152,7 +165,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CF341E63280DD15700B1C2E2 /* LaunchScreen.storyboard in Resources */,
 				CF341E60280DD15700B1C2E2 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -173,17 +185,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXVariantGroup section */
-		CF341E61280DD15700B1C2E2 /* LaunchScreen.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				CF341E62280DD15700B1C2E2 /* Base */,
-			);
-			name = LaunchScreen.storyboard;
-			sourceTree = "<group>";
-		};
-/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		CF341E65280DD15700B1C2E2 /* Debug */ = {
@@ -309,7 +310,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = L7KZPDRX49;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = CoreDataApp/Info.plist;
+				INFOPLIST_FILE = CoreDataApp/App/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -336,7 +337,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = L7KZPDRX49;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = CoreDataApp/Info.plist;
+				INFOPLIST_FILE = CoreDataApp/App/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";

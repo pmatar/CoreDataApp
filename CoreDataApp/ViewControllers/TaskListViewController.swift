@@ -39,7 +39,6 @@ class TaskListViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-
         let action = UIContextualAction(style: .destructive, title: "Delete") { [weak self] _,_, completion in
             guard let self = self else { return }
             
@@ -50,11 +49,10 @@ class TaskListViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-
         let action = UIContextualAction(style: .normal, title: "Edit") { [weak self] _, _, completion in
             guard let self = self else { return }
             
-            self.showAlert(with: "Update Task", and: "What do you want to do?", indexPath)
+            self.showAlert(with: "Update Task", and: "What do you want to do?", for: indexPath)
             completion(true)
         }
         action.backgroundColor = .systemBlue
@@ -63,8 +61,7 @@ class TaskListViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
-        showAlert(with: "Update Task", and: "What do you want to do?", indexPath)
+        showAlert(with: "Update Task", and: "What do you want to do?", for: indexPath)
         tableView.deselectRow(at: indexPath, animated: true)
     }
 }
@@ -128,7 +125,7 @@ extension TaskListViewController {
     
     // MARK: - UIAlertController
     
-    private func showAlert(with title: String, and message: String, _ index: IndexPath? = nil) {
+    private func showAlert(with title: String, and message: String, for index: IndexPath? = nil) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         let saveAction = UIAlertAction(title: "Save", style: .default) { _ in
             guard let inputTask = alert.textFields?.first?.text, !inputTask.isEmpty else { return }
@@ -144,9 +141,10 @@ extension TaskListViewController {
         alert.addAction(saveAction)
         alert.addAction(cancelAction)
         alert.addTextField { textField in
-            textField.placeholder = "New Task"
             if let index = index {
                 textField.text = self.taskList[index.row].title
+            } else {
+                textField.placeholder = "New Task"
             }
         }
         present(alert, animated: true)
