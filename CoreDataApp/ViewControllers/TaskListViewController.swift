@@ -9,7 +9,6 @@ import UIKit
 
 class TaskListViewController: UITableViewController {
     
-    private let coreDataManager = StorageManager.shared
     private var taskList: [Task] = []
     private let cellID = "task"
     
@@ -18,10 +17,10 @@ class TaskListViewController: UITableViewController {
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: cellID)
         view.backgroundColor = .white
         setupNavigationBar()
-        fetch()
+        fetchData()
     }
     
-    // MARK: - UITableViewDelegate, UITableViewDataSource
+    // MARK: - UITableViewDataSource
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         taskList.count
@@ -38,32 +37,43 @@ class TaskListViewController: UITableViewController {
         return cell
     }
     
+    // MARK: - UITableViewDelegate
+    
     override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        let action = UIContextualAction(style: .destructive, title: "Delete") { [weak self] _,_, completion in
+        let action = UIContextualAction(style: .destructive, title: "Delete") { [weak self] _,_,_ in
             guard let self = self else { return }
             
-            self.delete(at: indexPath)
-            completion(true)
+            let task = self.taskList.remove(at: indexPath.row)
+            tableView.deleteRows(at: [indexPath], with: .automatic)
+            StorageManager.shared.delete(task)
         }
         return UISwipeActionsConfiguration(actions: [action])
     }
-    
+
     override func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let action = UIContextualAction(style: .normal, title: "Edit") { [weak self] _, _, completion in
             guard let self = self else { return }
             
-            self.showAlert(with: "Update Task", and: "What do you want to do?", for: indexPath)
+            let task = self.taskList[indexPath.row]
+
+            self.showAlert(task: task) {
+                tableView.reloadRows(at: [indexPath], with: .automatic)
+            }
             completion(true)
         }
         action.backgroundColor = .systemBlue
-        
+
         return UISwipeActionsConfiguration(actions: [action])
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        showAlert(with: "Update Task", and: "What do you want to do?", for: indexPath)
         tableView.deselectRow(at: indexPath, animated: true)
+        let task = taskList[indexPath.row]
+        showAlert(task: task) {
+            tableView.reloadRows(at: [indexPath], with: .automatic)
+        }
     }
+    
 }
 
 // MARK: - Private Methods
@@ -71,7 +81,7 @@ class TaskListViewController: UITableViewController {
 extension TaskListViewController {
     
     @objc private func addButtonTapped() {
-        showAlert(with: "New Task", and: "What do you want to do?")
+        showAlert()
     }
     
     private func setupNavigationBar() {
@@ -95,58 +105,52 @@ extension TaskListViewController {
         navigationController?.navigationBar.tintColor = .white
     }
     
-    private func fetch() {
-        coreDataManager.fetchContext(&taskList)
+    private func fetchData() {
+        StorageManager.shared.fetchContext { result in
+            switch result {
+            case .success(let tasks):
+                self.taskList = tasks
+            case .failure(let error):
+                print(error.localizedDescription)
+            }
+        }
     }
     
-    private func save(_ taskName: String) {
-        let task = coreDataManager.createTask()
-        task.title = taskName
-        taskList.append(task)
-        coreDataManager.saveContext()
-        
-        let cellIndex = IndexPath(row: taskList.count - 1, section: 0)
-        tableView.insertRows(at: [cellIndex], with: .automatic)
-    }
-    
-    private func edit(with text: String, at index: IndexPath) {
-        let task = taskList[index.row]
-        task.title = text
-        coreDataManager.saveContext()
-        tableView.reconfigureRows(at: [index])
-    }
-    
-    private func delete(at index: IndexPath) {
-        let taskToRemove = taskList.remove(at: index.row)
-        coreDataManager.deleteTask(taskToRemove)
-        coreDataManager.saveContext()
-        tableView.deleteRows(at: [index], with: .automatic)
+    private func save(taskName: String) {
+        StorageManager.shared.create(taskName) { task in
+            self.taskList.append(task)
+            self.tableView.insertRows(at: [IndexPath(row: self.taskList.count - 1, section: 0)],
+                                      with: .automatic)
+        }
     }
     
     // MARK: - UIAlertController
     
-    private func showAlert(with title: String, and message: String, for index: IndexPath? = nil) {
-        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+    private func showAlert(task: Task? = nil, completion: (() -> Void)? = nil) {
+        let title = task != nil ? "Update Task" : "New Task"
+        
+        let alert = UIAlertController(title: title, message: "What do you want to do?", preferredStyle: .alert)
         let saveAction = UIAlertAction(title: "Save", style: .default) { _ in
+            
             guard let inputTask = alert.textFields?.first?.text, !inputTask.isEmpty else { return }
             
-            if let index = index {
-                self.edit(with: inputTask, at: index)
+            if let task = task, let completion = completion {
+                StorageManager.shared.update(task, newName: inputTask)
+                completion()
             } else {
-                self.save(inputTask)
+                self.save(taskName: inputTask)
             }
         }
+        
         let cancelAction = UIAlertAction(title: "Cancel", style: .destructive)
         
         alert.addAction(saveAction)
         alert.addAction(cancelAction)
         alert.addTextField { textField in
-            if let index = index {
-                textField.text = self.taskList[index.row].title
-            } else {
-                textField.placeholder = "New Task"
-            }
+            textField.placeholder = "New Task"
+            textField.text = task?.title
         }
+        
         present(alert, animated: true)
     }
 }

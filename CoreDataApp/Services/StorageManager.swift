@@ -11,7 +11,9 @@ class StorageManager {
     
     static let shared = StorageManager()
     
-    private var persistentContainer: NSPersistentContainer = {
+    // MARK: - Core Data Stack
+    
+    private let persistentContainer: NSPersistentContainer = {
         let container = NSPersistentContainer(name: "CoreDataApp")
         container.loadPersistentStores(completionHandler: { (storeDescription, error) in
             if let error = error as NSError? {
@@ -21,37 +23,52 @@ class StorageManager {
         return container
     }()
     
-    private init() {}
+    private let viewContext: NSManagedObjectContext
+    
+    private init() {
+        viewContext = persistentContainer.viewContext
+    }
+    
+    // MARK: - CRUD
+    
+    func fetchContext(completion: (Result<[Task], Error>) -> Void) {
+        let fetchRequest = Task.fetchRequest()
+        
+        do {
+            let tasks = try self.viewContext.fetch(fetchRequest)
+            completion(.success(tasks))
+        } catch let error {
+            completion(.failure(error))
+        }
+    }
+    
+    func create(_ taskName: String, completion: (Task) -> Void) {
+        let task = Task(context: viewContext)
+        task.title = taskName
+        completion(task)
+        saveContext()
+    }
+    
+    func update(_ task: Task, newName: String) {
+        task.title = newName
+        saveContext()
+    }
+    
+    func delete(_ task: Task) {
+        viewContext.delete(task)
+        saveContext()
+    }
+    
+    // MARK: - Core Data Saving support
     
     func saveContext() {
-        let context = persistentContainer.viewContext
-        if context.hasChanges {
+        if viewContext.hasChanges {
             do {
-                try context.save()
+                try viewContext.save()
             } catch {
                 print(error.localizedDescription)
             }
         }
-    }
-    
-    func fetchContext(_ data: inout [Task]) {
-        let fetchRequest = Task.fetchRequest()
-        let context = persistentContainer.viewContext
-        do {
-            data = try context.fetch(fetchRequest)
-        } catch {
-            print(error.localizedDescription)
-        }
-    }
-    
-    func createTask() -> Task {
-        let context = persistentContainer.viewContext
-        return Task(context: context)
-    }
-    
-    func deleteTask(_ task: Task) {
-        let context = persistentContainer.viewContext
-        context.delete(task)
     }
 
 }
